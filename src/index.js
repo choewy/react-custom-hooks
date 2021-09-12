@@ -1,17 +1,42 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import AppUseInput from './App-using-useInput';
+import AppUseTabs from './App-using-useTabs';
+import AppUseTitle from './App-using-useTitle';
+import AppUseClick from './App-using-useClick';
+import AppUseConfirm from './App-using-useConfirm';
+import AppUsePreventLeave from './App-using-usePreventLeave';
+
+import './index.css'
+import AppUseBeforeLeave from './App-using-useBeforeLeave';
+import AppUseFadeIn from './App-using-useFadeIn';
+import AppUseNetwork from './App-using-useNetwork';
+import AppUseScroll from './App-using-useScroll';
+import AppUseFullscreen from './App-using-useFullscreen';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <AppUseInput />
+    <hr />
+    <AppUseTabs />
+    <hr />
+    <AppUseTitle />
+    <hr />
+    <AppUseClick />
+    <hr />
+    <AppUseConfirm />
+    <hr />
+    <AppUsePreventLeave />
+    <hr />
+    <AppUseBeforeLeave />
+    <hr />
+    <AppUseFadeIn />
+    <hr />
+    <AppUseNetwork />
+    <hr />
+    <AppUseScroll />
+    <hr />
+    <AppUseFullscreen />
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
