@@ -8,16 +8,17 @@
   @media (max-width: 768px) {
     max-width: 768px;
     width: 100%;
-    word-wrap: normal;
   }
 }
 
 pre {
   padding: 15px;
   background-color: #eee;
+  word-wrap: normal;
 
   @media (max-width: 768px) {
     max-width: 768px;
     width: 100%;
+    word-wrap: normal;
   }
 }

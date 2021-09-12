@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Route, Switch } from "react-router";
-import { useBeforeLeave, useClick, useConfirm, useFadeIn, useFullscreen, useInput, useLoading, useNetwork, useNotification, usePreventLeave, useScroll, useTabs } from "./hooks";
+import { useAxios, useBeforeLeave, useClick, useConfirm, useFadeIn, useFullscreen, useInput, useLoading, useNetwork, useNotification, usePreventLeave, useScroll, useTabs } from "./hooks";
 
 const AppUseInput = () => {
 
@@ -389,7 +389,7 @@ export const useFullscreen = (callback) => {
 };
 
 const AppUseNotification = () => {
-    const triggerNotification = useNotification("알림이라고 알림!");
+    const triggerNotification = useNotification("이것은!", { body: "알림이라고 알림!" });
     return (
         <div style={{ padding: "10px" }}>
             <h1>💡 useNotification</h1>
@@ -421,6 +421,68 @@ const AppUseNotification = () => {
     )
 };
 
+const AppUseAxios = () => {
+    const { loading, error, data, refetch } = useAxios({ url: "https://yts.am/api/v2/list_movies.json" })
+    console.log(loading, error, data)
+    return (
+        <div style={{ padding: "10px" }}>
+            <h1>💡 useAxios</h1>
+            <h2>코드</h2>
+            <pre>{`import { useState, useEffect } from 'react';
+
+export const useAxios = (options, axiosInstance = defaultAxios) => {
+    const [state, setState] = useState({
+        loading: true,
+        error: null,
+        data: null
+    });
+
+    const [trigger, setTrigger] = useState(0);
+
+    const refetch = () => {
+        setState({
+            ...state,
+            loading: true,
+        });
+        setTrigger(Date.now());
+    };
+
+    useEffect(() => {
+        if (!options.url) {
+            return;
+        };
+
+        axiosInstance(options)
+            .then(data => {
+                console.log(data);
+                setState({
+                    ...state,
+                    loading: false,
+                    data
+                })
+            })
+            .catch(error => {
+                setState({
+                    ...state,
+                    loading: false,
+                    error
+                })
+            })
+    }, [trigger]);
+
+    return { ...state, refetch };
+}`}</pre>
+            <hr />
+            <h2>예시</h2>
+            <div>
+                <h3>{data && data.status}</h3>
+                <h4>{loading && "불러오는 중..."}</h4>
+                <button onClick={refetch}>다시 불러오기</button>
+            </div>
+        </div>
+    )
+}
+
 export const links = [
     { text: "useInput", path: "/useInput" },
     { text: "useTabs", path: "/useTabs" },
@@ -434,6 +496,7 @@ export const links = [
     { text: "useScroll", path: "/useScroll" },
     { text: "useFullscreen", path: "/useFullscreen" },
     { text: "useNotification", path: "/useNotification" },
+    { text: "useAxios", path: "/useAxios" },
 ];
 
 export const Routes = () => {
@@ -451,6 +514,7 @@ export const Routes = () => {
             <Route exact={true} path="/useScroll" component={AppUseScroll} />
             <Route exact={true} path="/useFullscreen" component={AppUseFullscreen} />
             <Route exact={true} path="/useNotification" component={AppUseNotification} />
+            <Route exact={true} path="/useAxios" component={AppUseAxios} />
         </Switch>
     )
 };
