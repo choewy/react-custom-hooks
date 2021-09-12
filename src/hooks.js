@@ -8,10 +8,10 @@ export const useInput = (init, validator) => {
             typeof validator === "function" &&
             validator(value)
         ) setValue(value);
-    }
+    };
 
     return { value, onChange };
-}
+};
 
 export const useTabs = (index, tabs) => {
     const [currentIndex, setCurrentIndex] = useState(index);
@@ -22,18 +22,19 @@ export const useTabs = (index, tabs) => {
             content: tabs[currentIndex].content,
             onContent: setCurrentIndex
         };
-    }
+    };
 };
 
-export const useTitle = (init) => {
-    const [title, setTitle] = useState(init);
+export const useLoading = (init, callback) => {
+    const [text, setText] = useState(init);
 
     useEffect(() => {
-        if (title === "Loading...") console.log('useTitle : Loading...')
-        else console.log('useTitle : Complete!')
-    }, [title]);
+        if (typeof callback === "function") {
+            callback();
+        }
+    }, [text, callback]);
 
-    return { title, setTitle };
+    return { text, setText };
 }
 
 export const useClick = (onClick) => {
@@ -42,19 +43,20 @@ export const useClick = (onClick) => {
     useEffect(() => {
         if (element.current) {
             element.current.addEventListener("click", onClick);
-        }
+        };
     });
+
     return element;
 };
 
 export const useConfirm = (message, resolve, reject) => {
-    if (!resolve || typeof callback !== "function") return;
-    if (reject && typeof rejection !== "function") return;
+    if (!resolve || typeof resolve !== "function") return;
+    if (reject && typeof reject !== "function") return;
 
     const confirmAction = () => {
         if (window.confirm(message)) resolve();
         else reject();
-    }
+    };
 
     return confirmAction;
 };
@@ -69,19 +71,19 @@ export const usePreventLeave = () => {
     const disablePrevent = () => window.removeEventListener('beforeunload', listner);
 
     return { enablePrevent, disablePrevent };
-}
+};
 
-export const useBeforeLeave = (onBefore) => {
+export const useBeforeLeave = (callback) => {
+
     const handle = (event) => {
-        const { clientY } = event;
-        if (clientY <= 0 && typeof onBefore === "function") onBefore();
-    }
+        if (typeof callback === "function" && event.clientY <= 0) callback();
+    };
 
     useEffect(() => {
         document.addEventListener("mouseleave", handle);
         return () => document.removeEventListener("mouseleave", handle);
-    })
-}
+    });
+};
 
 export const useFadeIn = (duration = 2, delay = 0) => {
     const element = useRef();
@@ -94,10 +96,8 @@ export const useFadeIn = (duration = 2, delay = 0) => {
         }
     });
 
-
-
     return { ref: element, style: { opacity: 0 } };
-}
+};
 
 export const useNetwork = onChange => {
     const [status, setStatus] = useState(navigator.onLine);
@@ -116,12 +116,12 @@ export const useNetwork = onChange => {
         return () => {
             window.removeEventListener("online", handleChange);
             window.removeEventListener("offline", handleChange);
-        }
+        };
 
-    })
+    });
 
     return status;
-}
+};
 
 export const useScroll = () => {
     const [state, setState] = useState({ x: 0, y: 0 });
@@ -130,12 +130,55 @@ export const useScroll = () => {
         const x = window.scrollX;
         const y = window.scrollY;
         setState({ x, y });
-    }
+    };
 
     useEffect(() => {
         window.addEventListener("scroll", onScroll);
-        return () => window.removeEventListener("scroll", onScroll)
-    })
+        return () => window.removeEventListener("scroll", onScroll);
+    });
 
     return state;
-}
+};
+
+export const useFullscreen = (callback) => {
+    const element = useRef();
+
+    const onFullscreen = () => {
+        if (element.current) {
+            element.current.requestFullscreen();
+            if (callback && typeof callback === "function") {
+                callback(true)
+            };
+        };
+    };
+
+    const exitFullscreen = () => {
+        document.exitFullscreen();
+        if (callback && typeof callback === "function") {
+            callback(false);
+        };
+    };
+
+    return { element, onFullscreen, exitFullscreen };
+};
+
+export const useNotification = (title, options) => {
+    if (!("Notification" in window)) { return; };
+
+    const chromeNotification = () => {
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission()
+                .then(permission => {
+                    if (permission === "granted") {
+                        new Notification(title, options);
+                    } else {
+                        return;
+                    };
+                });
+        } else {
+            new Notification(title, options);
+        };
+    };
+
+    return chromeNotification;
+};
